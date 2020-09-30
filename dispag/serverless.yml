@@ -81,6 +81,9 @@ functions:
             - http:
                 method: post
                 path: login
+            - http:
+                method: post
+                path: loginteste
     auth-dispagv:
         name: auth-dispag-lb
         handler: auth-dispag/handler.verificartk
