@@ -1,4 +1,11 @@
-# Microsservice
+# DISPAG
 
 ### Projeto
-Projeto de agenda de consulta em Microsserviço, Event-driven e CQRS
+Projeto de controle financeiro pessoal de contas a pagar. 
+O objetivo é apenas reunir conhecimento de tecnologias 
+
+### Arquitetura Lógica
+[![N|Solid](https://github.com/hagemelo/microsservico/blob/master/dispag/arquiteturalogica.JPG)]
+
+
+
