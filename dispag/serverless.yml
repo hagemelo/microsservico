@@ -60,13 +60,13 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-    command-dispag:
-        name: command-dipag-lb
-        handler: command-dispag/handler.action
+    command-novodebito:
+        name: command-novodebito-lb
+        handler: command-novodebito/handler.action
         events:
             - http:
-                method: get
-                path: teste
+                method: post
+                path: novodebito
     query-dispag:
         name: query-dispag-lb
         handler: query-dispag/handler.debitos
@@ -143,4 +143,6 @@ functions:
 #       Value: "Some output value"
 
 plugins:
+  - serverless-plugin-typescript
   - serverless-offline
+  - serverless-dotenv-plugin
