@@ -4,7 +4,7 @@ const bp = require('body-parser')
 const config = require('./config')
 const respcod = require('../conf/response-code')
 const {agendar_atendimento_error: AgendarAtendimentoError} = require('../exceptions')
-
+const client = new kafka.KafkaClient({kafkaHost: process.env.KAFKA_SERVER})
 
 class KafkaOff {
   //Classe para responder de modo padrao qdo o Kafka estiver desabilitado
@@ -12,71 +12,71 @@ class KafkaOff {
     this.event = event
   } 
 
-  async run(){
+  run(){
     return respcod.responseCode.acceptedWithThismessageReturn(this.event, 'Nenhuma Acao Sera Tomada. Kafka Off')
   }
 
 }
 
 class KafkaOn {
+  
   constructor (event) {
-    this.event = event
+    this.event = event  
   } 
-
-  async run(){
-    let Producer = kafka.Producer
-    let client = new kafka.KafkaClient({kafkaHost: process.env.KAFKA_SERVER})
-    let producer = new Producer(client)
+  
+  criarmsg(){
     let kafka_topic = process.env.TOPIC_AGENDARATENDIMENTO
-
-
-    let payloads =  [{ 
+    return  [{ 
       topic: kafka_topic, 
       messages: this.event.body,
       partition: 0 
-    }]
+    }] 
+  }
 
+  pushTopic1(producer, payloads){
     producer.on('ready', async function () {
-
-      let push_status = producer.send(payloads, (err, data) => {
+        
+      producer.send(payloads, (err, data) => {
         if (err) {
-          console.error('[kafka-producer -> '+kafka_topic+']: broker failed')
+          //console.error('[kafka-producer -> '+kafka_topic+']: broker failed')
+          console.error('[kafka-producer -> '+payloads.topic+']: broker failed')
           console.error(err)
-          throw new AgendarAtendimentoError()
+          //throw new AgendarAtendimentoError()
         }else {
-          let bodyreturn = JSON.stringify(
-            {
-              topic: kafka_topic,
-              message: 'kafka-producer -> broker success',
-              input: this.event.body,
-            },
-            null,
-            2
-          )
-          console.log('[kafka-producer -> '+kafka_topic+']: broker success')
-          return respcod.responseCode.successWithThisBodyReturn(this.event, bodyreturn)
+          
+          //console.log('[kafka-producer -> '+kafka_topic+']: broker success')
+          console.log('[kafka-producer -> '+payloads.topic+']: broker success')
+                    
         }
       })
 
-
     })
 
-    producer.on('error', function (err) {
-
-      console.log(err)
-    })
-    
-   
   }
 
+  run(){
+    
+    try{
+      let producer = new kafka.Producer(client)     
+      let payloads = this.criarmsg()
+      this.pushTopic1(producer, payloads)
+      
+    }catch(exception){
+      console.log("Entrou na Exception--> " + exception)
+      //throw new AgendarAtendimentoError("Erro kafka")
+    }  
+    //return respcod.responseCode.acceptedWithThismessageReturn(this.event, 'Nenhuma Acao Sera Tomada. Kafka Off')
+    return respcod.responseCode.acceptedWithThismessageReturn(this.event, 'Operacao Realizada Com Sucesso, as acoes serão tomadas no decorrer do tempo')
+  }
+  
 }
 
 
 module.exports.action = async event => {
   
-  console.log(AgendarAtendimentoError)
-  let runKafka = ((process.env.KAFKA_ENABLE === 'ON') ? new KafkaOn(event): new KafkaOff(event)) 
+  let runKafka = ((process.env.KAFKA_ENABLE == 'ON') ? new KafkaOn(event): new KafkaOff(event)) 
   return runKafka.run()
+  
 }
 
 
