@@ -1,9 +1,8 @@
-package br.com.jhage.dispag.novodebito.service;
+package br.com.jhage.dispag.pagardebito.service;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.logging.log4j.LogManager;
@@ -17,12 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.jhage.dispag.core.modelo.Credor;
 import br.com.jhage.dispag.core.modelo.Debitos;
-import br.com.jhage.dispag.novodebito.exception.ConvertJsonToNovoDebitoException;
-import br.com.jhage.dispag.novodebito.exception.LoadCredorException;
-import br.com.jhage.dispag.novodebito.repository.CredorRepository;
-import br.com.jhage.dispag.novodebito.repository.DebitosRepository;
+import br.com.jhage.dispag.pagardebito.exception.ConvertJsonToDebitoException;
+import br.com.jhage.dispag.pagardebito.repository.DebitosRepository;
 
 /**
  * 
@@ -33,22 +29,18 @@ import br.com.jhage.dispag.novodebito.repository.DebitosRepository;
 
 @Service
 @Transactional
-public class NovoDebitoConsumerService implements CommandLineRunner{
+public class PagarDebitoConsumerService implements CommandLineRunner{
 
-	private static final Logger logger = LogManager.getLogger(NovoDebitoConsumerService.class);
+	private static final Logger logger = LogManager.getLogger(PagarDebitoConsumerService.class);
 	
 	private final CountDownLatch latch;
-	private String novodebito;
+	private String debito;
 	private Debitos debitos;
 	
 	@Autowired
 	private DebitosRepository debitosRepository;
 	
-	@Autowired
-	private CredorRepository credorRepository;
-	
-	
-	public NovoDebitoConsumerService(@Value("${kafka.number.receiver.threads}") Integer numberReceiverThreads) {
+	public PagarDebitoConsumerService(@Value("${kafka.number.receiver.threads}") Integer numberReceiverThreads) {
 		
 		latch = new CountDownLatch(numberReceiverThreads);
 	}
@@ -58,11 +50,12 @@ public class NovoDebitoConsumerService implements CommandLineRunner{
 		
 		try {
 			logger.info("Consumer value::" + debitoConsumerRecord.toString());
-			novodebito = new String((String) debitoConsumerRecord.value());
-			convertJsonToNovoDebito();
-			loadCredor();
+			debito = new String((String) debitoConsumerRecord.value());
+			convertJsonToDebito();
+			loadDebito();
+			this.debitos.pagar();
 			debitosRepository.save(this.debitos);
-			logger.info("Debito Efetuado com SUCESSO!! ::" + this.debitos.converterToString());
+			logger.info("Debito Pago com SUCESSO!! ::" + this.debitos.converterToString());
 		}catch (Exception e) {
 			e.printStackTrace();
 			StringBuffer buffer  = new StringBuffer()
@@ -75,23 +68,20 @@ public class NovoDebitoConsumerService implements CommandLineRunner{
 		}
     }
 	
-	private void loadCredor() throws LoadCredorException{
+	private void loadDebito() {
 		
-		Credor credor = credorRepository.loadCredorByDescricao(this.debitos.getCredor().getDescricao());
-		if (credor == null)
-			credor = new Credor(this.debitos.getCredor().getDescricao(), this.debitos.getCredor().getTipo());
-		this.debitos.add(credor);
+		this.debitos = debitosRepository.getOne(this.debitos.getId());
 	}
 	
-	private void convertJsonToNovoDebito() throws ConvertJsonToNovoDebitoException{
+	private void convertJsonToDebito() throws ConvertJsonToDebitoException{
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			
-			this.debitos = mapper.readValue(this.novodebito, Debitos.class);
+			this.debitos = mapper.readValue(this.debito, Debitos.class);
 		} catch (IOException e) {
 			
-			throw new ConvertJsonToNovoDebitoException(e.getMessage());
+			throw new ConvertJsonToDebitoException(e.getMessage());
 		}  
 	}
 	

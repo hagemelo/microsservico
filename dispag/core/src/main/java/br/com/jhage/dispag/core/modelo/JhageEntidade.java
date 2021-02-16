@@ -17,6 +17,8 @@ import br.com.jhage.dispag.core.exception.ConverterToStringException;
 
 public interface JhageEntidade<E> extends Serializable{
 
+	static final int ZERO = 0;
+	static final char SEPARADOR = '-';
 	public Long getId();
 	public String converterToString() throws ConverterToStringException;
 	public String getJsonValue() throws JsonProcessingException;

@@ -4,7 +4,7 @@ jspm_packages
 
 # Serverless directories
 .serverless
-.ppt
-.odp
+*.odp
+*.pptx
 .vs
 .build

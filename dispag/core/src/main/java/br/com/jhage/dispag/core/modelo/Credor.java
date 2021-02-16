@@ -1,12 +1,17 @@
 package br.com.jhage.dispag.core.modelo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -29,7 +34,6 @@ import br.com.jhage.dispag.core.exception.ConverterToStringException;
 public class Credor implements JhageEntidade<Credor> {
 
 	private static final long serialVersionUID = 1L;
-	private static final int ZERO = 0;
 
 	@Version
 	Integer versao;
@@ -46,17 +50,26 @@ public class Credor implements JhageEntidade<Credor> {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "tipo")
 	private Tipo tipo;
+	
+	@OneToMany(mappedBy = "credor", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Debitos> debitos;
+	
+	@OneToMany(mappedBy = "credor", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<DetalheOrcamento> detalhesOrcamento;
 
+	
 	public Credor(String descricao, String tipo) {
 
 		this.descricao = descricao;
 		this.tipo = Tipo.get(tipo);
+		this.debitos = new HashSet<Debitos>();
 	}
 	
 	public Credor(String descricao, Tipo tipo) {
 
 		this.descricao = descricao;
 		this.tipo = tipo;
+		this.debitos = new HashSet<Debitos>();
 	}
 	
 	public Credor() {
@@ -74,7 +87,10 @@ public class Credor implements JhageEntidade<Credor> {
 	@Override
 	public String converterToString() throws ConverterToStringException {
 
-		StringBuffer buffer = new StringBuffer().append(" ");
+		StringBuffer buffer = new StringBuffer()
+				.append(this.tipo.getDescricao())
+				.append(SEPARADOR)
+				.append(this.descricao);
 		return buffer.toString();
 	}
 
@@ -88,6 +104,26 @@ public class Credor implements JhageEntidade<Credor> {
 
 	public Tipo getTipo() {
 		return tipo;
+	}
+
+	public Set<Debitos> getDebitos() {
+		
+		if (this.debitos == null)
+			this.debitos = new HashSet<Debitos>();
+		return debitos;
+	}
+	
+	public Set<DetalheOrcamento> getDetalhesOrcamento() {
+		
+		if (this.detalhesOrcamento == null)
+			this.detalhesOrcamento = new HashSet<DetalheOrcamento>();
+		return detalhesOrcamento;
+	}
+	
+	public Credor add(Debitos debitos) {
+		
+		this.debitos.add(debitos);
+		return this;
 	}
 
 	@JsonIgnore

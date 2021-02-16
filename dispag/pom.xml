@@ -25,6 +25,8 @@
 	<modules>
 		<module>core</module>
 		<module>novodebito</module>
+		<module>pagardebito</module>
+		<module>excluirdebito</module>
 		<!--<module>command</module>
 		<module>agendaratendimento</module>
 		<module>cadastrarcliente</module>-->

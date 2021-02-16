@@ -17,6 +17,11 @@ public enum Tipo {
 		this.descricao = descricao;
 	}
 	
+	public String getDescricao() {
+		
+		return this.descricao;
+	}
+	
 	public static Tipo get(String find) {
 
 		Tipo result = Tipo.AVULSOS;

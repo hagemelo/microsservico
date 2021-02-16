@@ -20,7 +20,7 @@ public class NumberHelp {
 		return new NumberHelp();
 	}
 	
-	public String parseDoubleToString(Double valor) throws NumberHelpException{
+	public static String parseDoubleToString(Double valor) throws NumberHelpException{
 		
 		StringBuffer build = new StringBuffer();
 		try{
