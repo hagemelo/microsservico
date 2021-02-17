@@ -62,35 +62,35 @@ provider:
 functions:
     command-novodebito:
         name: command-novodebito-lb
-        handler: command-novodebito/handler.action
+        handler: command-novodebito/novodebito_handler.action
         events:
             - http:
                 method: post
                 path: novodebito
-    query-dispag:
-        name: query-dispag-lb
-        handler: query-dispag/handler.debitos
-        events:
-            - http:
-                method: get
-                path: debitos
-    auth-dispag:
-        name: auth-dispag-lb
-        handler: auth-dispag/handler.login
-        events:
-            - http:
-                method: post
-                path: login
-            - http:
-                method: post
-                path: loginteste
-    auth-dispagv:
-        name: auth-dispag-lb
-        handler: auth-dispag/handler.verificartk
-        events:
-            - http:
-                method: post
-                path: verificar 
+    #query-dispag:
+    #    name: query-dispag-lb
+    #    handler: query-dispag/handler.debitos
+    #    events:
+    #        - http:
+    #            method: get
+    #            path: debitos
+    #auth-dispag:
+    #    name: auth-dispag-lb
+    #    handler: auth-dispag/handler.login
+    #    events:
+    #        - http:
+    #            method: post
+    #            path: login
+    #        - http:
+    #            method: post
+    #            path: loginteste
+    #auth-dispagv:
+    #    name: auth-dispag-lb
+    #    handler: auth-dispag/handler.verificartk
+    #    events:
+    #        - http:
+    #            method: post
+    #            path: verificar 
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -146,3 +146,7 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dotenv-plugin
+  - serverless-jest-plugin
+
+custom:
+  jest:

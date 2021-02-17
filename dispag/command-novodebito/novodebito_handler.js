@@ -1,10 +1,11 @@
 //'use strict';
 const kafka = require('kafka-node')
 const bp = require('body-parser')
-const config = require('./config')
+//const config = require('./config')
 const respcod = require('../conf/response-code')
-const {agendar_atendimento_error: AgendarAtendimentoError} = require('../exceptions')
+const {NovoDebitoError: novoDebitoErr} = require('../exceptions/exception')
 const client = new kafka.KafkaClient({kafkaHost: process.env.KAFKA_SERVER})
+
 
 class KafkaOff {
   //Classe para responder de modo padrao qdo o Kafka estiver desabilitado
@@ -25,7 +26,7 @@ class KafkaOn {
   } 
   
   criarmsg(){
-    let kafka_topic = process.env.TOPIC_AGENDARATENDIMENTO
+    let kafka_topic = process.env.KAFKATOPIC_NOVODEBITO
     return  [{ 
       topic: kafka_topic, 
       messages: this.event.body,
@@ -34,13 +35,15 @@ class KafkaOn {
   }
 
   pushTopic1(producer, payloads){
-    producer.on('ready', async function () {
-        
+    
+    producer.on('ready', function () {
+      
       producer.send(payloads, (err, data) => {
         if (err) {
           //console.error('[kafka-producer -> '+kafka_topic+']: broker failed')
           console.error('[kafka-producer -> '+payloads.topic+']: broker failed')
           console.error(err)
+          
           //throw new AgendarAtendimentoError()
         }else {
           
@@ -51,7 +54,9 @@ class KafkaOn {
       })
 
     })
-
+    producer.on('error', function () {
+      throw new novoDebitoErr("Erro in (" +payloads.topic + ")")
+    })
   }
 
   run(){
@@ -60,12 +65,10 @@ class KafkaOn {
       let producer = new kafka.Producer(client)     
       let payloads = this.criarmsg()
       this.pushTopic1(producer, payloads)
-      
     }catch(exception){
       console.log("Entrou na Exception--> " + exception)
       //throw new AgendarAtendimentoError("Erro kafka")
     }  
-    //return respcod.responseCode.acceptedWithThismessageReturn(this.event, 'Nenhuma Acao Sera Tomada. Kafka Off')
     return respcod.responseCode.acceptedWithThismessageReturn(this.event, 'Operacao Realizada Com Sucesso, as acoes serão tomadas no decorrer do tempo')
   }
   

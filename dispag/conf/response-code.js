@@ -30,7 +30,6 @@ let responseCode = {
             body: JSON.stringify(
                 {
                   message: msg,
-                  input: event,
                 },
                 null,
                 2
