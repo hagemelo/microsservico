@@ -62,11 +62,20 @@ provider:
 functions:
     command-novodebito:
         name: command-novodebito-lb
-        handler: command-novodebito/novodebito_handler.action
+        handler: command/novodebito_handler.action
         events:
             - http:
                 method: post
                 path: novodebito
+    auth-dispag:
+        name: auth-dispag-lb
+        handler: auth-dispag/handler.login
+        events:
+            - http:
+                method: post
+                path: login
+    
+    
     #query-dispag:
     #    name: query-dispag-lb
     #    handler: query-dispag/handler.debitos

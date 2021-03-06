@@ -30,9 +30,42 @@ class PagarDebitoError extends Error {
   }
 }
 
+class PushTopicError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "Error ao push Topic:"
+    console.error(this.name)
+    console.error(this.message)
+    console.error(this.stack)
+  }
+}
+
+class AusenciaHeadersFundamentaisError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "Ausencia de Headers Fundamentais:"
+    console.error(this.name)
+    console.error(this.message)
+    console.error(this.stack)
+  }
+}
+
+class TokenExpiradoError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "Token expirado error"
+    console.error(this.name)
+    console.error(this.message)
+    console.error(this.stack)
+  }
+}
+
 module.exports = {
   NovoDebitoError,
   ExcluirDebitoError,
-  PagarDebitoError
+  PagarDebitoError,
+  PushTopicError,
+  AusenciaHeadersFundamentaisError,
+  TokenExpiradoError
 }
 
