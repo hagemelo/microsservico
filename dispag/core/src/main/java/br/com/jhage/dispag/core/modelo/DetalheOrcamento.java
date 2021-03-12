@@ -3,6 +3,8 @@ package br.com.jhage.dispag.core.modelo;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.jhage.dispag.core.constante.Estado;
 import br.com.jhage.dispag.core.exception.ConverterToStringException;
 import br.com.jhage.dispag.core.exception.NumberHelpException;
 import br.com.jhage.dispag.core.helper.NumberHelp;
@@ -41,6 +44,10 @@ public class DetalheOrcamento implements JhageEntidade<Orcamento> {
 	@SequenceGenerator(name = "deoid", sequenceName = "GEN_DEO_ID", allocationSize = 1, initialValue = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "deoid")
 	private Long id;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private Estado estado;
 
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "ORC_ID", referencedColumnName = "ORC_ID")
@@ -56,13 +63,15 @@ public class DetalheOrcamento implements JhageEntidade<Orcamento> {
 	public DetalheOrcamento() {
 		
 		this.valor = Double.valueOf(ZERO);
+		this.estado = Estado.PENDENTE;
 	}
 	
 	public DetalheOrcamento(Orcamento orcamento, Credor credor,  Double valor) {
 		
 		this.credor = credor;
 		this.orcamento = orcamento;
-		this.valor = valor;		
+		this.valor = valor;	
+		this.estado = Estado.PENDENTE;
 	}
 	
 	@Override
@@ -82,7 +91,21 @@ public class DetalheOrcamento implements JhageEntidade<Orcamento> {
 	public Double getValor() {
 		return valor;
 	}
+	
+	public Estado getEstado() {
+		return estado;
+	}
 
+	public void aprovar() {
+		
+		this.estado = Estado.APROVADO;
+	}
+	public void rejeitar() {
+		
+		this.estado = Estado.REJEITADO;
+	}
+	
+	
 	@JsonProperty
 	public String valorString() throws NumberHelpException {
 

@@ -3,17 +3,17 @@ package br.com.jhage.dispag.core.constante;
 /**
  * 
  * @author Alexsander Melo
- * @since 04/02/2021
+ * @since 07/03/2021
  *
  */
 
-public enum Status {
+public enum Estado {
 
-	AVENCER("A VENCER"), ATRASADO("ATRASADO"), PAGO("PAGO");
+	PENDENTE("PENDENTE"), APROVADO("APROVADO"), REJEITADO("PAGO");
 
 	private final String descricao;
 
-	Status(final String descricao) {
+	Estado(final String descricao) {
 
 		this.descricao = descricao;
 	}

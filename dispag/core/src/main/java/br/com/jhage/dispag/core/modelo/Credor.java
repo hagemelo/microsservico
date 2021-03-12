@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.jhage.dispag.core.constante.Estado;
 import br.com.jhage.dispag.core.constante.Tipo;
 import br.com.jhage.dispag.core.exception.ConverterToStringException;
 
@@ -43,6 +44,10 @@ public class Credor implements JhageEntidade<Credor> {
 	@SequenceGenerator(name = "crdid", sequenceName = "GEN_CREDOR_ID", allocationSize = 1, initialValue = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "atdid")
 	private Long id;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private Estado estado;
 
 	@Column(name = "descricao")
 	private String descricao;
@@ -63,6 +68,7 @@ public class Credor implements JhageEntidade<Credor> {
 		this.descricao = descricao;
 		this.tipo = Tipo.get(tipo);
 		this.debitos = new HashSet<Debitos>();
+		this.estado = Estado.PENDENTE;
 	}
 	
 	public Credor(String descricao, Tipo tipo) {
@@ -70,6 +76,7 @@ public class Credor implements JhageEntidade<Credor> {
 		this.descricao = descricao;
 		this.tipo = tipo;
 		this.debitos = new HashSet<Debitos>();
+		this.estado = Estado.PENDENTE;
 	}
 	
 	public Credor() {
@@ -82,6 +89,10 @@ public class Credor implements JhageEntidade<Credor> {
 	public Long getId() {
 
 		return this.id;
+	}
+	
+	public Estado getEstado() {
+		return estado;
 	}
 
 	@Override
@@ -126,6 +137,16 @@ public class Credor implements JhageEntidade<Credor> {
 		return this;
 	}
 
+	public void aprovar() {
+		
+		this.estado = Estado.APROVADO;
+	}
+	
+	public void rejeitar() {
+		
+		this.estado = Estado.REJEITADO;
+	}
+	
 	@JsonIgnore
 	public String getJsonValue() throws JsonProcessingException {
 

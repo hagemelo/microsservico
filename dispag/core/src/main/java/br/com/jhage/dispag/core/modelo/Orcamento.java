@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.jhage.dispag.core.constante.Estado;
 import br.com.jhage.dispag.core.exception.ConverterToStringException;
 import br.com.jhage.dispag.core.exception.NumberHelpException;
 import br.com.jhage.dispag.core.helper.NumberHelp;
@@ -44,6 +47,10 @@ public class Orcamento implements JhageEntidade<Orcamento> {
 	@SequenceGenerator(name = "orcid", sequenceName = "GEN_DORC_ID", allocationSize = 1, initialValue = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orcid")
 	private Long id;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private Estado estado;
 
 	@Column(name = "VALORRECEITA")
 	private Double valorReceita;
@@ -59,12 +66,14 @@ public class Orcamento implements JhageEntidade<Orcamento> {
 
 		this.valorReceita = Double.valueOf(ZERO);
 		this.detalhes = new HashSet<DetalheOrcamento>();
+		this.estado = Estado.PENDENTE;
 	}
 
 	public Orcamento(String anomes, Double valorReceita) {
 
 		this.anomes = anomes;
 		this.valorReceita = valorReceita;
+		this.estado = Estado.PENDENTE;
 	}
 
 	@Override
@@ -80,6 +89,10 @@ public class Orcamento implements JhageEntidade<Orcamento> {
 	public String getAnomes() {
 		return anomes;
 	}
+	
+	public Estado getEstado() {
+		return estado;
+	}
 
 	public Set<DetalheOrcamento> getDetalhes() {
 
@@ -88,6 +101,17 @@ public class Orcamento implements JhageEntidade<Orcamento> {
 		return this.detalhes;
 	}
 
+	public void aprovar() {
+		
+		this.estado = Estado.APROVADO;
+	}
+	
+	public void rejeitar() {
+		
+		this.estado = Estado.REJEITADO;
+	}
+	
+	
 	@JsonProperty
 	public String saldoDespesasString() throws NumberHelpException {
 

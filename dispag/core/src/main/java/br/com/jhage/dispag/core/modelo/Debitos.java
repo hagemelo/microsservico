@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.jhage.dispag.core.constante.Estado;
 import br.com.jhage.dispag.core.constante.Status;
 import br.com.jhage.dispag.core.exception.ConverterToStringException;
 import br.com.jhage.dispag.core.exception.FormatDateHelperException;
@@ -59,6 +60,10 @@ public class Debitos implements JhageEntidade<Debitos> {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private Status status;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private Estado estado;
 
 	@Column(name = "MARCACAO")
 	private String marcacao;
@@ -76,6 +81,7 @@ public class Debitos implements JhageEntidade<Debitos> {
 		this.valor = Double.valueOf(ZERO);
 		this.vencimento = new Date();
 		this.status = Status.AVENCER;
+		this.estado = Estado.PENDENTE;
 	}
 
 	public Debitos(Double valor, String status, String vencimento) {
@@ -83,6 +89,7 @@ public class Debitos implements JhageEntidade<Debitos> {
 		this.valor = 0.;
 		this.vencimento = new Date();
 		this.status = Status.AVENCER;
+		this.estado = Estado.PENDENTE;
 	}
 
 	@Override
@@ -105,6 +112,10 @@ public class Debitos implements JhageEntidade<Debitos> {
 
 	public Date getVencimento() {
 		return vencimento;
+	}
+
+	public Estado getEstado() {
+		return estado;
 	}
 
 	public Debitos add(Credor credor) {
@@ -139,6 +150,16 @@ public class Debitos implements JhageEntidade<Debitos> {
 	public void marcarComoAtrasado() {
 
 		this.status = Status.ATRASADO;
+	}
+	
+	public void aprovar() {
+		
+		this.estado = Estado.APROVADO;
+	}
+	
+	public void rejeitar() {
+		
+		this.estado = Estado.REJEITADO;
 	}
 	
 	@Override
