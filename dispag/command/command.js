@@ -1,66 +1,70 @@
-const bp = require('body-parser')
-const respcod = require('../conf/response-code')
+//const bp = require('body-parser')
+
+const kafka = require('kafka-node')
+const client = new kafka.KafkaClient({kafkaHost: process.env.KAFKA_SERVER})
+const jwt = require('jsonwebtoken')
+//# Class Exxeptions
 const {PushTopicError: commandException} = require('../exceptions/exception')
+const {TokenExpiradoError: TokenExpiradoError} = require('../exceptions/exception')
+const {AusenciaHeadersFundamentaisError: AusenciaHeadersFundamentaisError} = require('../exceptions/exception')
+const {PushTopicError: PushTopicError} = require('../exceptions/exception')
 
 
-class KafkaOff {
-    //Classe para responder de modo padrao qdo o Kafka estiver desabilitado
-    constructor (event) {
-      this.event = event
-    } 
+export async function isKafkaOn(){
+
+  if (process.env.KAFKA_ENABLE == 'OFF')
+    throw new Error('[Kafka Off] Nenhuma Acao Sera Tomada')
+}
+
+export function validarTokenExpirado(event){
+
+  jwt.verify(event.headers.token, process.env.SECRET, function(err, decoded) {      
+    if (err) 
+      throw new TokenExpiradoError("Token Expirado")  
+  });
+
+  console.log("Token::" + event.headers.token)
+}
+
+export function existHeadertkuuid(event){
+
+  if(!event.headers.token && !event.headers.uuid) 
+    throw new AusenciaHeadersFundamentaisError("Ausencia dos headers uuid e token")
   
-    run(){
-      
-      return respcod.responseCode.acceptedWithThismessageReturn(this.event, 'Nenhuma Acao Sera Tomada. Kafka Off')
-    }
+  console.log("uuid::" + event.headers.uuid)
+}
+
+export function createmsgtopushKafka(topic, body){
+
+  return  [{ 
+    topic: topic, 
+    messages: body,
+    partition: 0 
+  }] 
+}
+
+export function pushTopic(payloads){
+ 
+  let producer = new kafka.Producer(client)
+  producer.on('ready', function () {
+    producer.send(payloads, (err, data) => {
+      if (err) {
+        
+        console.error(err)
+        throw new PushTopicError('[kafka-producer -> '+payloads.topic+']: broker failed')
+      }else {
+
+        console.log('[kafka-producer -> '+payloads.topic+']: broker success')
+      }
+    })
+  })
+  producer.on('error', function () {
+    throw new commandException("Erro in (" +payloads.topic + ")")
+  })
   
 }
 
 
-class KafkaOn {
-  
-    constructor (event, commandtopic) {
-      this.event = event
-      this.commandtopic = commandtopic  
-    } 
-    
-    criarmsg(){
-      return  [{ 
-        topic: this.commandtopic, 
-        messages: this.event.body,
-        partition: 0 
-      }] 
-    }
-  
-    pushTopic(producer, payloads){
-      
-      producer.on('ready', function () {
-        
-        producer.send(payloads, (err, data) => {
-          if (err) {
-            //console.error('[kafka-producer -> '+kafka_topic+']: broker failed')
-            console.error('[kafka-producer -> '+payloads.topic+']: broker failed')
-            console.error(err)
-            
-            //throw new AgendarAtendimentoError()
-          }else {
-            
-            //console.log('[kafka-producer -> '+kafka_topic+']: broker success')
-            console.log('[kafka-producer -> '+payloads.topic+']: broker success')
-                      
-          }
-        })
-  
-      })
-      producer.on('error', function () {
-        throw new commandException("Erro in (" +payloads.topic + ")")
-      })
-    }
 
-    
-  }
 
-  module.exports = {
-    KafkaOff,
-    KafkaOn
-  }
+

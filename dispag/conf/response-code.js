@@ -7,7 +7,11 @@ const BAD_REQUEST = 400
 const UNAUTHORIZED = 401
 const FORBIDDEN = 403
 
-
+//#500
+const INTERNAL_SERVER_ERROR = 500
+const NOT_IMPLEMENTED = 501
+const BAD_GATEWAY = 502
+const SERVICE_UNAVAILABLE = 503
 
 let responseCode = {
 
@@ -61,6 +65,22 @@ let responseCode = {
           }
     },
 
+    serviceUnavailableReturn : function (event){
+        
+      return {
+            statusCode: SERVICE_UNAVAILABLE,
+            body: JSON.stringify(
+              {
+                auth: false,
+                message: 'O servidor não está pronto para manipular a requisição',
+                input: event.body
+              },
+              null,
+              2
+            ),
+          }
+    },
+
     ausenciaHeadersFundamentaisReturn : function (event){
         
       return {
@@ -75,7 +95,6 @@ let responseCode = {
             ),
           }
     },
-
 
 
 
