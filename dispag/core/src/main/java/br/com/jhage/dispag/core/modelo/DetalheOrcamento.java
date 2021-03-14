@@ -46,7 +46,7 @@ public class DetalheOrcamento implements JhageEntidade<Orcamento> {
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
+	@Column(name = "estado")
 	private Estado estado;
 
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })

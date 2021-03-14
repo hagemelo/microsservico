@@ -62,7 +62,7 @@ public class Debitos implements JhageEntidade<Debitos> {
 	private Status status;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
+	@Column(name = "estado")
 	private Estado estado;
 
 	@Column(name = "MARCACAO")

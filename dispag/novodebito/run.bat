@@ -2,7 +2,7 @@ echo off
 echo "Inicializar Microsservico novo Debito"
 
 ##Kafka Config
-set KAFKA_SERVER=172.27.85.17:9092
+set KAFKA_SERVER=172.29.9.107:9092
 set KAFKA_GROUP=DISPAG
 set KAFKATOPIC=NOVODEBITO
 

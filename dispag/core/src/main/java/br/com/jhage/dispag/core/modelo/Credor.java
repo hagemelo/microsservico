@@ -46,7 +46,7 @@ public class Credor implements JhageEntidade<Credor> {
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
+	@Column(name = "estado")
 	private Estado estado;
 
 	@Column(name = "descricao")

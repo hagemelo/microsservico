@@ -49,7 +49,7 @@ public class Orcamento implements JhageEntidade<Orcamento> {
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
+	@Column(name = "estado")
 	private Estado estado;
 
 	@Column(name = "VALORRECEITA")
