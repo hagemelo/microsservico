@@ -16,6 +16,7 @@ O objetivo é apenas reunir conhecimento de tecnologias.
 - AWS
 - Docker
 - Apache Kafka
+- Flutter
 
 
 ### Arquitetura Lógica
