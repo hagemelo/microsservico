@@ -31,7 +31,7 @@ import br.com.jhage.dispag.core.exception.ConverterToStringException;
  * 
  */
 @Entity
-@Table(name = "CREDOR")
+@Table(name = "TB_CREDOR")
 public class Credor implements JhageEntidade<Credor> {
 
 	private static final long serialVersionUID = 1L;
@@ -58,10 +58,6 @@ public class Credor implements JhageEntidade<Credor> {
 	
 	@OneToMany(mappedBy = "credor", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Debitos> debitos;
-	
-	@OneToMany(mappedBy = "credor", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<DetalheOrcamento> detalhesOrcamento;
-
 	
 	public Credor(String descricao, String tipo) {
 
@@ -122,13 +118,6 @@ public class Credor implements JhageEntidade<Credor> {
 		if (this.debitos == null)
 			this.debitos = new HashSet<Debitos>();
 		return debitos;
-	}
-	
-	public Set<DetalheOrcamento> getDetalhesOrcamento() {
-		
-		if (this.detalhesOrcamento == null)
-			this.detalhesOrcamento = new HashSet<DetalheOrcamento>();
-		return detalhesOrcamento;
 	}
 	
 	public Credor add(Debitos debitos) {

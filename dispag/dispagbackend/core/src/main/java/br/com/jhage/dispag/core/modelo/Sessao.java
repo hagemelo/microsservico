@@ -1,10 +1,13 @@
 package br.com.jhage.dispag.core.modelo;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -38,6 +41,10 @@ public class Sessao implements JhageEntidade<Sessao> {
 	private Long id;
 
 	private String uuid;
+	
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@JoinColumn(name = "USE_ID", referencedColumnName = "USE_ID")
+	private Usuario usuario;
 	
 	private StatusSessao statusSessao;
 	
@@ -76,6 +83,19 @@ public class Sessao implements JhageEntidade<Sessao> {
 		this.statusSessao = StatusSessao.FECHADO;
 	}
 	
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public Sessao add(Usuario usuario) {
+		
+		this.usuario = usuario;
+		return this;
+	}
 	
 	@JsonIgnore
 	public String getJsonValue() throws JsonProcessingException {

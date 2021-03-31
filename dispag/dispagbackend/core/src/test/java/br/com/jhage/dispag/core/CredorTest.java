@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import br.com.jhage.dispag.core.modelo.Credor;
 import br.com.jhage.dispag.core.modelo.Debitos;
+import br.com.jhage.dispag.core.modelo.Orcamento;
 
 public class CredorTest {
 	
@@ -14,7 +15,8 @@ public class CredorTest {
 	public void deveRetornarAvulso() throws Exception {
 		
 		Credor cred = new Credor("DIVIDO DE HJ", "AVULSOS");
-		Debitos deb = new Debitos().add(cred); 
+		Orcamento orc = new Orcamento();
+		Debitos deb = new Debitos().add(cred).add(orc); 
 		System.out.println(deb.getJsonValue());
 		
 		int UM  = 1;

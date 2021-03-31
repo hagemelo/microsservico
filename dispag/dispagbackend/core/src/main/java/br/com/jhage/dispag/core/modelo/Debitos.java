@@ -71,6 +71,11 @@ public class Debitos implements JhageEntidade<Debitos> {
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "CREDOR_ID", referencedColumnName = "CREDOR_ID")
 	private Credor credor;
+	
+	
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@JoinColumn(name = "ORC_ID", referencedColumnName = "ORC_ID")
+	private Orcamento orcamento;
 
 	@JsonFormat(pattern = "dd/MM/yyyy", timezone = "Brazil/East")
 	@Temporal(TemporalType.DATE)
@@ -117,11 +122,22 @@ public class Debitos implements JhageEntidade<Debitos> {
 	public Estado getEstado() {
 		return estado;
 	}
+	
+	public Orcamento getOrcamento() {
+		return orcamento;
+	}
 
 	public Debitos add(Credor credor) {
 
 //		credor.add(this);
 		this.credor = credor;
+		return this;
+	}
+	
+	public Debitos add(Orcamento orcamento) {
+
+//		credor.add(this);
+		this.orcamento = orcamento;
 		return this;
 	}
 
