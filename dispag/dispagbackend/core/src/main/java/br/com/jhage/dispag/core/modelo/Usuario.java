@@ -45,7 +45,7 @@ public class Usuario implements JhageEntidade<Credor> {
 	
 	private String senha;
 	
-	@OneToMany(mappedBy = "credor", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Orcamento> orcamentos;
 	
 	public Usuario() {
