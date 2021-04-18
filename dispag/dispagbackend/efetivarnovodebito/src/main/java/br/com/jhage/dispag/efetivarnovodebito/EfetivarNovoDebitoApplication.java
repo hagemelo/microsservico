@@ -4,6 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Import;
+
+import br.com.jhage.dispag.core.conf.KafkaConfig;
 
 /**
  * 
@@ -14,10 +17,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 @EnableAutoConfiguration
 @SpringBootApplication
 @EntityScan( basePackages = {"br.com.jhage.dispag.core.modelo"} )
-public class NovoDebitoApplication {
+@Import(value= {KafkaConfig.class})
+public class EfetivarNovoDebitoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(NovoDebitoApplication.class, args).close();
+		SpringApplication.run(EfetivarNovoDebitoApplication.class, args).close();
 	}
 
 }
