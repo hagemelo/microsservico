@@ -55,6 +55,7 @@ public class ExcluirDebitoConsumerService implements CommandLineRunner {
 			loadDebito();
 			debitosRepository.delete(this.debitos);
 			logger.info("Debito Pago com SUCESSO!! ::" + this.debitos.converterToString());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			StringBuffer buffer = new StringBuffer().append("Erro ao receber valor::")
