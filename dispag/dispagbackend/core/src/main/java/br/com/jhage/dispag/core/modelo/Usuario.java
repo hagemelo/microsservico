@@ -25,7 +25,7 @@ import br.com.jhage.dispag.core.exception.ConverterToStringException;
  *
  */
 @Entity
-@Table(name = "USUARIO")
+@Table(name = "TB_USUARIO")
 public class Usuario implements JhageEntidade<Credor> {
 
 	private static final long serialVersionUID = 1L;

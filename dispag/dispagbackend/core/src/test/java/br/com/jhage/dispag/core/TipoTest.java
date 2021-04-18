@@ -3,11 +3,13 @@ package br.com.jhage.dispag.core;
 
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.jhage.dispag.core.constante.Mes;
 import br.com.jhage.dispag.core.constante.Tipo;
 
+@Ignore
 public class TipoTest {
 
 	@Test

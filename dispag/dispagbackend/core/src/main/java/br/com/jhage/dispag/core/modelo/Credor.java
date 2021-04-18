@@ -42,7 +42,7 @@ public class Credor implements JhageEntidade<Credor> {
 	@Id
 	@Column(name = "CREDOR_ID", nullable = false)
 	@SequenceGenerator(name = "crdid", sequenceName = "GEN_CREDOR_ID", allocationSize = 1, initialValue = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "atdid")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "crdid")
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)

@@ -1,12 +1,14 @@
 package br.com.jhage.dispag.core;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.jhage.dispag.core.modelo.Credor;
 import br.com.jhage.dispag.core.modelo.Debitos;
 import br.com.jhage.dispag.core.modelo.Orcamento;
 
+@Ignore
 public class CredorTest {
 	
 	

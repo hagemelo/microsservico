@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,7 +41,7 @@ import br.com.jhage.dispag.core.helper.NumberHelp;
  * 
  */
 @Entity
-@Table(name = "DEBITOS")
+@Table(name = "TB_DEBITOS")
 public class Debitos implements JhageEntidade<Debitos> {
 
 	private static final long serialVersionUID = 1L;
@@ -68,12 +69,12 @@ public class Debitos implements JhageEntidade<Debitos> {
 	@Column(name = "MARCACAO")
 	private String marcacao;
 
-	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "CREDOR_ID", referencedColumnName = "CREDOR_ID")
 	private Credor credor;
 	
 	
-	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "ORC_ID", referencedColumnName = "ORC_ID")
 	private Orcamento orcamento;
 
@@ -117,6 +118,17 @@ public class Debitos implements JhageEntidade<Debitos> {
 
 	public Date getVencimento() {
 		return vencimento;
+	}
+	
+	@JsonIgnore
+	public String getVencimentoString() {
+		try {
+			return  FormatDateHelper.getInstance().converterDataParaCaracter(this.vencimento);
+		} catch (FormatDateHelperException e) {
+
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 	public Estado getEstado() {
