@@ -28,6 +28,7 @@
 		<module>pagardebito</module>
 		<module>efetivarnovodebito</module>
 		<module>excluirdebito</module>
+		<module>cadastrarcredor</module>
 		<!--<module>command</module>
 		
 		<module>agendaratendimento</module>
