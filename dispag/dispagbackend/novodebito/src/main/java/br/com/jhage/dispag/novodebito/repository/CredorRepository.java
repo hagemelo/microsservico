@@ -21,7 +21,8 @@ public interface CredorRepository extends JpaRepository<Credor, Long>{
 	
 	@Query("select c " +
 			   "from Credor c "+
-			   "where c.descricao like :descricao" )
+			   "where c.descricao like :descricao"
+			   + " and c.estado = br.com.jhage.dispag.core.constante.Estado.APROVADO" )
 	public Credor loadCredorByDescricao(@Param("descricao") String descricao);
 	
 }

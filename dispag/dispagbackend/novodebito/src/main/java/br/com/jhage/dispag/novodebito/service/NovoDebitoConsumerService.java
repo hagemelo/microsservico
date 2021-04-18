@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,12 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.jhage.dispag.core.constante.Mes;
 import br.com.jhage.dispag.core.modelo.Credor;
 import br.com.jhage.dispag.core.modelo.Debitos;
+import br.com.jhage.dispag.core.modelo.Orcamento;
 import br.com.jhage.dispag.novodebito.exception.ConvertJsonToNovoDebitoException;
 import br.com.jhage.dispag.novodebito.exception.LoadCredorException;
+import br.com.jhage.dispag.novodebito.exception.LoadOrcamentoException;
+import br.com.jhage.dispag.novodebito.exception.NovoDebitoConsumerServiceListenException;
 import br.com.jhage.dispag.novodebito.repository.CredorRepository;
 import br.com.jhage.dispag.novodebito.repository.DebitosRepository;
+import br.com.jhage.dispag.novodebito.repository.OrcamentoRepository;
 
 /**
  * 
@@ -47,6 +51,9 @@ public class NovoDebitoConsumerService implements CommandLineRunner{
 	@Autowired
 	private CredorRepository credorRepository;
 	
+	@Autowired
+	private OrcamentoRepository orcamentoRepository;
+	
 	
 	public NovoDebitoConsumerService(@Value("${kafka.number.receiver.threads}") Integer numberReceiverThreads) {
 		
@@ -54,33 +61,42 @@ public class NovoDebitoConsumerService implements CommandLineRunner{
 	}
 	
 	@KafkaListener(id = "${kafka.group.id.condif}", topics = "${kafka.topic}")
-    public void listen(ConsumerRecord<?, ?> debitoConsumerRecord){
+    public void listen(ConsumerRecord<?, ?> debitoConsumerRecord) {
 		
 		try {
 			logger.info("Consumer value::" + debitoConsumerRecord.toString());
 			novodebito = new String((String) debitoConsumerRecord.value());
 			convertJsonToNovoDebito();
 			loadCredor();
+			loadOrcamento();
 			debitosRepository.save(this.debitos);
 			logger.info("Debito Efetuado com SUCESSO!! ::" + this.debitos.converterToString());
+			
 		}catch (Exception e) {
-			e.printStackTrace();
 			StringBuffer buffer  = new StringBuffer()
 					.append("Erro ao receber valor::")
 					.append(debitoConsumerRecord.toString())
 					.append(" | Com Erro::")
 					.append(e.getMessage());
 			logger.error(buffer.toString());
-			latch.countDown();
+			throw new NovoDebitoConsumerServiceListenException();
 		}
     }
 	
 	private void loadCredor() throws LoadCredorException{
 		
 		Credor credor = credorRepository.loadCredorByDescricao(this.debitos.getCredor().getDescricao());
-		if (credor == null)
-			credor = new Credor(this.debitos.getCredor().getDescricao(), this.debitos.getCredor().getTipo());
+		assert credor != null : "Credor Não Encontrado";
 		this.debitos.add(credor);
+	}
+	
+	private void loadOrcamento() throws LoadOrcamentoException{
+		
+		int ano = this.debitos.getOrcamento().getAno();
+		Mes mes =  this.debitos.getOrcamento().getMes();
+		Orcamento orc = orcamentoRepository.loadOrcamentoBy(ano, mes);
+		assert orc != null : "Orcamento Não Encontrado";
+		this.debitos.add(orc);
 	}
 	
 	private void convertJsonToNovoDebito() throws ConvertJsonToNovoDebitoException{
@@ -95,11 +111,14 @@ public class NovoDebitoConsumerService implements CommandLineRunner{
 		}  
 	}
 	
-	
+	public CountDownLatch getLatch() {
+		return latch;
+	}
+
 	@Override
 	public void run(String... args) throws Exception {
 		
-		latch.await(300, TimeUnit.DAYS);
+		latch.await(600, TimeUnit.SECONDS);
 	}
 	
 }
