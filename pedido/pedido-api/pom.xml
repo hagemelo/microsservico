@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.0.RELEASE</version>
+		<version>2.3.3.RELEASE</version>
 	</parent>
     
     <properties>
@@ -109,9 +109,10 @@
 		<!-- Banco de Desenvolvimento -->
 		<dependency>
 		    <groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.4.1211</version>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.2.16</version>
 		</dependency>
+				
 	
 	  
     </dependencies>

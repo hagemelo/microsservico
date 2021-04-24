@@ -29,7 +29,7 @@ import br.com.jhage.pedido_api.modelo.Pedido;
  *
  */
 
-
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes=PedidoApplication.class, webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AtendimentoControllerTest {

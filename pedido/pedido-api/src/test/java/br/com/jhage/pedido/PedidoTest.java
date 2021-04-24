@@ -2,6 +2,7 @@ package br.com.jhage.pedido;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -9,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import br.com.jhage.pedido_api.modelo.ItemPedido;
 import br.com.jhage.pedido_api.modelo.Pedido;
 
+@Ignore
 public class PedidoTest {
 
 	private static final Double VALOR_DEFAUL = 5.6;

@@ -27,7 +27,14 @@ provider:
 
 # you can overwrite defaults here
 #  stage: dev
-  region: us-east-1
+  region: us-east-2
+  vpc:
+    securityGroupIds:
+      - sg-0bf048bba2ffab140
+      - sg-086dbca6f18eb499e
+    subnetIds:
+      - subnet-0bd2b902b764ad6b1
+      - subnet-07699f487086588cd
   deploymentBucket:
     name: dispag-code
 
@@ -68,9 +75,9 @@ functions:
             - http:
                 method: post
                 path: novodebito
-  auth-dispag:
-        name: auth-dispag-lb
-        handler: auth-dispag/handler.login
+  auth:
+        name: auth-lb
+        handler: auth/handler.login
         events:
             - http:
                 method: post

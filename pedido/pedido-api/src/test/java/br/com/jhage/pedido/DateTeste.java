@@ -7,8 +7,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
-
+@Ignore
 public class DateTeste {
 	
 	

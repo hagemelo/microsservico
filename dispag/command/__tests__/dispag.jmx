@@ -45,6 +45,15 @@
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
         <hashTree>
+          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable" enabled="true">
+            <stringProp name="maximumValue">888.88</stringProp>
+            <stringProp name="minimumValue">1.11</stringProp>
+            <stringProp name="outputFormat"></stringProp>
+            <boolProp name="perThread">false</boolProp>
+            <stringProp name="randomSeed"></stringProp>
+            <stringProp name="variableName">valor</stringProp>
+          </RandomVariableConfig>
+          <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="[1] Request - Autenticar" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -109,15 +118,17 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
-	&quot;valor&quot;:54.0,&#xd;
-	&quot;status&quot;:&quot;AVENCER&quot;,&#xd;
+	&quot;valor&quot;:${__Random(1,300)},&#xd;
 	&quot;marcacao&quot;:&quot;PAGAMENTO DE BESTEIRA&quot;,&#xd;
 	&quot;credor&quot;:{&#xd;
-		&quot;id&quot;:null,&#xd;
 		&quot;descricao&quot;:&quot;DINHEIRO NA CARTEIRA&quot;,&#xd;
 		&quot;tipo&quot;:&quot;AVULSOS&quot;&#xd;
 	},&#xd;
-	&quot;vencimento&quot;:&quot;13/02/2021&quot;&#xd;
+	&quot;orcamento&quot;:{&#xd;
+		&quot;mes&quot;:&quot;ABRIL&quot;,&#xd;
+		&quot;ano&quot;:&quot;2021&quot;	&#xd;
+	},&#xd;
+	&quot;vencimento&quot;:&quot;${__RandomDate(dd/MM/yyyy,,08/12/2023,,)}&quot;&#xd;
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>

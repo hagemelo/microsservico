@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -69,12 +68,12 @@ public class Debitos implements JhageEntidade<Debitos> {
 	@Column(name = "MARCACAO")
 	private String marcacao;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "CREDOR_ID", referencedColumnName = "CREDOR_ID")
 	private Credor credor;
 	
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "ORC_ID", referencedColumnName = "ORC_ID")
 	private Orcamento orcamento;
 

@@ -35,35 +35,41 @@ public class EfetivarNovoDebitoConsumerService implements CommandLineRunner{
 	private static final Logger logger = LogManager.getLogger(EfetivarNovoDebitoConsumerService.class);
 	
 	private final CountDownLatch latch;
-	private String novodebitoString;
-	private Debitos debitos;
-	private Debitos novodebito;
+	
+	private ConsumerRecord<?, ?> debitoConsumerReceived;
+	private Debitos debitosKafkaReceived;
+	private Debitos debitoLoadedFromdb;
+	private final int sleepTime;
+	
 	
 	@Autowired
 	private DebitosRepository debitosRepository;
 	
 	
-	public EfetivarNovoDebitoConsumerService(@Value("${kafka.number.receiver.threads}") Integer numberReceiverThreads) {
+	public EfetivarNovoDebitoConsumerService(@Value("${kafka.number.receiver.threads}") Integer numberReceiverThreads,
+			@Value("${set.sleep.time}") Integer sleepTime) {
 		
 		latch = new CountDownLatch(numberReceiverThreads);
+		this.sleepTime = sleepTime;
 	}
 	
 	@KafkaListener(id = "${kafka.group.id.condif}", topics = "${kafka.topic}")
-    public void listen(ConsumerRecord<?, ?> debitoConsumerRecord){
+    public void listen(ConsumerRecord<?, ?> consumerRecord){
 		
 		try {
-			logger.info("Consumer value::" + debitoConsumerRecord.toString());
-			novodebitoString = new String((String) debitoConsumerRecord.value());
+			logger.info("Consumer value::" + consumerRecord.toString());
+			Thread.sleep(sleepTime); //Pausa Importante para dar o devido tempo de processamento do NovoDebito
+			debitoConsumerReceived = consumerRecord;
 			convertJsonToNovoDebito();
 			loadDebito();
-			this.debitos.aprovar();
-			debitosRepository.save(this.debitos);
-			logger.info("Debito Efetivado com SUCESSO!! ::" + this.debitos.converterToString());
+			this.debitoLoadedFromdb.aprovar();
+			debitosRepository.save(this.debitoLoadedFromdb);
+			logger.info("Debito Efetivado com SUCESSO!! ::" + this.debitoLoadedFromdb.converterToString());
 		}catch (Exception e) {
 			e.printStackTrace();
 			StringBuffer buffer  = new StringBuffer()
-					.append("Erro ao receber valor::")
-					.append(debitoConsumerRecord.toString())
+					.append("Erro ao Efetivar Novo Debito::")
+					.append(consumerRecord.toString())
 					.append(" | Com Erro::")
 					.append(e.getMessage());
 			logger.error(buffer.toString());
@@ -73,9 +79,9 @@ public class EfetivarNovoDebitoConsumerService implements CommandLineRunner{
 	
 	private void loadDebito() throws LoadDebitosException{
 		
-		this.novodebito = debitosRepository.loadCredorByDescricao(this.debitos.getMarcacao(), this.debitos.getVencimentoString()); 
+		this.debitoLoadedFromdb = debitosRepository.loadCredorByDescricao(this.debitosKafkaReceived.getMarcacao(), this.debitosKafkaReceived.getVencimentoString()); 
 				
-		assert this.novodebito  != null : "Orcamento Não Encontrado";
+		assert this.debitoLoadedFromdb  != null : "Orcamento Não Encontrado";
 	}
 	
 	private void convertJsonToNovoDebito() throws ConvertJsonToNovoDebitoException{
@@ -83,7 +89,7 @@ public class EfetivarNovoDebitoConsumerService implements CommandLineRunner{
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			
-			this.debitos = mapper.readValue(this.novodebitoString, Debitos.class);
+			this.debitosKafkaReceived = mapper.readValue(new String((String) debitoConsumerReceived.value()), Debitos.class);
 		} catch (IOException e) {
 			
 			throw new ConvertJsonToNovoDebitoException(e.getMessage());

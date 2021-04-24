@@ -12,12 +12,28 @@ const pushNovodebito = async event=> {
   command.pushTopic(payload)
 }
 
+const pushEfetivarNovodebito = async event=> {
+
+  let payload = command.createmsgtopushKafka(process.env.KAFKATOPIC_EFETIVARNOVODEBITO, event.body)
+  command.pushTopic(payload)
+}
+
+const pushCadastrarCredor = async event=> {
+
+  const jsonBody = JSON.parse( event.body)
+  const cadastrarCredorBody = JSON.stringify(jsonBody.credor)
+  const payload = command.createmsgtopushKafka(process.env.KAFKATOPIC_CADASTRARCREDOR, cadastrarCredorBody)
+  command.pushTopic(payload)
+}
+
 const commandNovoDebito = async event =>{
   
   try{
     command.validarTokenExpirado(event)
     command.existHeadertkuuid(event)
-    await pushNovodebito(event)   
+    await pushCadastrarCredor(event) 
+    await pushNovodebito(event)
+    await pushEfetivarNovodebito(event) 
     
     return respcod.acceptedWithThismessageReturn(event, 'Operacao Realizada Com Sucesso, as acoes serão tomadas no decorrer do tempo')  
   }catch (exception) {
