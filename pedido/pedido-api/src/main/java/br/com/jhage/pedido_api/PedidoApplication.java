@@ -15,14 +15,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PedidoApplication implements ApplicationRunner {
 
+	public static void main(String[] args) {
+		SpringApplication.run(PedidoApplication.class, args).close();
+	}
+	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 			
 		System.in.read();
 	}
 
-	public static void main(String[] args) {
-		SpringApplication.run(PedidoApplication.class, args);
-	}
+
 
 }
